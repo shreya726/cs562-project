@@ -136,7 +136,7 @@ def cluster_data(D, S, k, c=0):
 		s = S # a u-shapelet
 		dis = compute_distance(s, D)
 
-		DIS = [dis] # pseudocode says [DIS dis]
+		DIS += [dis] # pseudocode says [DIS dis]
 		sum_dis = math.inf
 
 		for i in range(1, n):
@@ -148,4 +148,3 @@ def cluster_data(D, S, k, c=0):
 		CRI[count] = 1 - adjusted_rand_score(cls[count-1], cls[count])
 	a = min(enumerate(cls), key=itemgetter(1))[0]
 	return cls[a]
-
