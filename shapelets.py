@@ -5,7 +5,11 @@ import scipy.stats as stats
 from sklearn.metrics.cluster import adjusted_rand_score
 from operator import itemgetter
 
+# Based on the pseudocode found on pgs 5-6 of this paper:
+# http://www.cs.ucr.edu/~eamonn/ClusteringTimeSeriesUsingUnsupervised-Shapelets.pdf
 
+# Compute distance vector 
+# s = subsequence, D = dataset
 def compute_distance(s, D):
 	dis = []
 	s = stats.zcore(s)
@@ -22,6 +26,7 @@ def compute_distance(s, D):
 	return list(set([i/math.sqrt(len(s)) for i in dis]))
 
 
+# s = u-shapelet, D = dataset 
 def compute_gap(s, D, k=3):
 	dis = compute_distance(s, D)
 	dis = sorted(dis)
@@ -31,8 +36,9 @@ def compute_gap(s, D, k=3):
 
 	for l in range(0, abs(dis) - 1):
 		d = (dis[l] + dis[l+1]) / 2
-		D_A = find(dis < d)
-		D_B = find(dis > d)
+		D_A = [i for i in dis if i < d]
+	
+		D_B = [i for i in dis if i > d]
 
 		r = len(D_A)/len(D_B)
 
@@ -50,6 +56,8 @@ def compute_gap(s, D, k=3):
 				dt = d
 	return maxgap, dt 
 
+# Extract unsupervised shapelets 
+# D = dataset, s_length = shapelet length 
 def extract_shapelets(D, s_length):
 	S = [] 
 	ts = D[1:]
@@ -68,7 +76,7 @@ def extract_shapelets(D, s_length):
 		S = subsequences[index1]
 		dis = compute_distance(subsequences[index1], D)
 
-		D_lambda = find(dis < dt) #not sure what this is
+		D_lambda = [i for i in dis if i < dt]
 
 		if len(D_lambda) == 1: break
 
@@ -76,7 +84,7 @@ def extract_shapelets(D, s_length):
 		ts = D[index2:]
 
 		theta = np.mean(dis(D_lambda)) + np.std(dis(D_lambda))
-		D = find(dis < theta)
+		D = [i for i in dis if i < theta]
 
 	return S
 
@@ -96,7 +104,6 @@ def plus(args):
 def scale(p, c):
     (x,y) = p
     return (x/c, y/c)
-
 
 # K-means 
 def k_means(DIS, k):
@@ -119,6 +126,8 @@ def k_means(DIS, k):
 	    M = [scale(t,c) for ((m,t),(m2,c)) in product(MT, MC) if m == m2]
 	    return sorted(M)
 
+# Cluster time series
+# D = dataset, S = set of unsupervised shapelets, k = number of clusters
 def cluster_data(D, S, k, c=0):
 	DIS = []
 	cls[0] = c # default cluster label
