@@ -19,7 +19,7 @@ def compute_distance(s, D):
 		dis[i] = math.inf
 
 		for j in range(1, len(ts) - len(s) + 1):
-			z = stats.zscore(ts) # help idk
+			z = stats.zscore(ts[j:j+len(s)])
 			d = np.linalg.norm(z, s)
 			dis[i] = min(d, dis[i])
 
