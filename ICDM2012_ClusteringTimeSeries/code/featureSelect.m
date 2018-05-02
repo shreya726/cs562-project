@@ -2,12 +2,12 @@ clear;
 clc;
 warning off;
 
-data=load('../sampleDataset/Trace.txt');
+data=load('/Users/Shreya/Downloads/UCR_TS_Archive_2015/StarLightCurves/StarLightCurves_TEST');
 cls1=data(:,1);
 
-fid = fopen('C:\ftrSlcn\ICDM2012_ClusteringTimeSeries\sampleDataset\loc1.txt','w');
-fid1 = fopen('C:\ftrSlcn\ICDM2012_ClusteringTimeSeries\sampleDataset\ftr1.txt','w');
-fid2 = fopen('C:\ftrSlcn\ICDM2012_ClusteringTimeSeries\sampleDataset\acc1.txt','w');
+fid = fopen('\Users\Shreya\test\loc1.txt','w');
+fid1 = fopen('\Users\Shreya\test\ftr1.txt','w');
+fid2 = fopen('\Users\Shreya\test\acc1.txt','w');
 
 ts = 1;
 
@@ -111,7 +111,7 @@ while true
         subplot(3,1,3);
         hist(dis); hold on;
         plot([sqrt(2*(1-corr)) sqrt(2*(1-corr))],[0 10]);hold off;
-        saveas(gcf,strcat('C:\ftrSlcn\ICDM2012_ClusteringTimeSeries\sampleDataset\acc1\out',num2str(iter)),'jpg');
+        saveas(gcf,strcat('\Users\Shreya\test\out',num2str(iter)),'jpg');
         iter=iter+1;
         disp(i);
         disp(accuracy);

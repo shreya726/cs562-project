@@ -1,7 +1,7 @@
 import math
 import numpy as np
 
-import scipy.stats as stats
+from scipy import stats
 from sklearn.metrics.cluster import adjusted_rand_score
 from operator import itemgetter
 
@@ -11,17 +11,24 @@ from operator import itemgetter
 # Compute distance vector 
 # s = subsequence, D = dataset
 def compute_distance(s, D):
-	dis = []
-	s = stats.zcore(s)
-
-	for i in range(1, len(D)):
+	print(s)
+	print(D)
+	return
+	dis = [None for i in range(0, len(D))]
+	s = stats.zscore(s)
+	print(s)
+	for i in range(0, len(D)):
 		ts = D[i:]
-		dis[i] = math.inf
+		dis[i] = 1000000 # represents inf
 
 		for j in range(1, len(ts) - len(s) + 1):
 			z = stats.zscore(ts[j:j+len(s)])
+			print(z)
+			print(s)
 			d = np.linalg.norm(z, s)
+			print(d)
 			dis[i] = min(d, dis[i])
+			print(dis)
 
 	return list(set([i/math.sqrt(len(s)) for i in dis]))
 
@@ -29,6 +36,7 @@ def compute_distance(s, D):
 # s = u-shapelet, D = dataset 
 def compute_gap(s, D, k=3):
 	dis = compute_distance(s, D)
+	print(dis)
 	dis = sorted(dis)
 
 	maxgap = 0
@@ -64,12 +72,12 @@ def extract_shapelets(D, s_length):
 
 	while True:
 		count = 0
-		subsequences = []
+		subsequences = [None for i in range(0,len(D)**2)]
 		gap = [] # list of tuples (maxgap, dt)
 
 		for sl in range(1, s_length):
 			for i in range(1, len(ts) - sl + 1):
-				subsequences[count + 1] = ts[:i:i + sl -1]
+				subsequences[count + 1] = ts[i:i + sl-1]
 				gap[count + 1] = compute_gap(subsequences[count+1],D)
 
 		index1, dt = max(gap)
@@ -148,3 +156,6 @@ def cluster_data(D, S, k, c=0):
 		CRI[count] = 1 - adjusted_rand_score(cls[count-1], cls[count])
 	a = min(enumerate(cls), key=itemgetter(1))[0]
 	return cls[a]
+
+
+extract_shapelets([1,2,3,4],2)
